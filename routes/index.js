@@ -5,24 +5,6 @@ var router = express.Router();
 const userController = require('../controller/userController')
 const articleController = require('../controller/homeController')
 
-
-/* GET home page. */
-
-
-
-
-// exports.router = (function (){
-
-// const router = express.Router()
-
-// router.route('usu').get(userController.users)
-
-// return router
-
-// })()
-
-
-
 router.route('').get(articleController.getArticles)
 router.route('').post(articleController.addArticle)
 router.route('').put(articleController.updateArticle)

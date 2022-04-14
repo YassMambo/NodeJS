@@ -4,36 +4,6 @@ const {ArticleModel} = require('../models/home')
 
 module.exports = {
   
-    /*articles: (req, res) => {UserModel.find({}, (err, users) => {
-        if (err) {
-          res.status(500).send(err)
-        } else {
-            console.log(users)
-         /* ArticleModel.find({}, (err, articles) => {
-            if (err) {
-              res.status(500).send(err)
-            } else {
-              if (!articles) {
-                res.status(404).send('Aucun article trouvé trouvé')
-              }
-              res.status(200).render('index', {
-                articles,
-                users
-              })
-            }
-          })
-        }
-      })
-    }, */
-
-   /* articles: (req, res) => {
-       
-        res.status(200).render('', {
-            articles,
-            users
-        })
-    },*/
-
     addArticle: (req, res) => {
         const article = new ArticleModel({
             title: req.body.title,
