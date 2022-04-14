@@ -4,34 +4,39 @@ const {ArticleModel} = require('../models/home')
 
 module.exports = {
   
-    article: (req, res) => {
-        var id = req.params.id;
-        var article = articles.find(a => a.id == id);
-        if (article == null || article == undefined) {
-            return res.status(404).render('error', {});
+    articles: (req, res) => {UserModel.find({}, (err, users) => {
+        if (err) {
+          res.status(500).send(err)
+        } else {
+            console.log(users)
+         /* ArticleModel.find({}, (err, articles) => {
+            if (err) {
+              res.status(500).send(err)
+            } else {
+              if (!articles) {
+                res.status(404).send('Aucun article trouvé trouvé')
+              }
+              res.status(200).render('index', {
+                articles,
+                users
+              })
+            }
+          })*/
         }
-       return res.status(200).render('article', {
-            article
-        })
+      })
     }, 
-    articles: (req, res) => {
+
+   /* articles: (req, res) => {
        
-        res.status(200).render('articles', {
-            articles
+        res.status(200).render('', {
+            articles,
+            users
         })
-    },
+    },*/
 
     addArticle: (req, res) => {
-        /*const user = new UserModel({
-            _id: new mongoose.Types.ObjectId(),
-            firstname: 'Mambo',
-            lastname: 'Cubano',
-            age: req.body
-        })*/
-        UserModel.find({
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-        },(err, user)=>{
+        UserModel.findById({_id: req.body.id}, (err, user)=>{
+            console.log(user)
             if (err) {
                 res.status(500).json({
                     message: 'Impossible de recuperer le user',
@@ -39,70 +44,104 @@ module.exports = {
                 })
             } 
             else {
+               
                 if (!user) {
                     res.status(404).render('error',{
-                        error: err.message
+                        error: 'Aucun user trouvé'
                     })
-                }                
-            }
-            console.log(user);
-            const article = new ArticleModel({
-                title: req.body.title,
-                description: req.body.description,
-                user: user._id
-            })
+                }
 
-            article.save({}, (err, thing) => {
+                const article = new ArticleModel({
+                    title: req.body.title,
+                    description: req.body.description,
+                    user: user._id
+                })
+
+                article.save({}, (err, article, user) => {
+                    if (err) {
+                        res.status(500).render('error',{
+                            message: 'erreur dans la sauvegarde de cet article',
+                            error: err.message
+                        })
+                    } else {
+                        res.status(200).redirect('/articles',{
+                            message: 'Saved',
+                            article,
+                            user
+                        })
+                    }
+                })
+            }
+        })    
+    },
+
+    getArticles: (req, res) => {UserModel.find({}, (err, users) =>{
+        if (err) {
+            res.status(500).send(err)
+          } 
+        else {
+            ArticleModel.find({}, (err, articles) => {
                 if (err) {
-                    res.status(500).json({
-                        message: 'Error when saving the thing',
+                    res.status(500).render('error',{
+                        message: "Nous n'avons pas pu trouver les articles",
                         error: err.message
                     })
-                } else {
-                    res.status(200).json({
-                        message: 'Saved',
-                        thing
+                } 
+                else {
+                    if (!articles) {
+                        res.status(404).send('Aucun article trouvé trouvé')
+                      }
+                    
+
+                    res.status(200).render('index',{
+                        message: 'Article retrieved',
+                        articles,
+                        users
+                        
                     })
                 }
             })
+          }
+    })
+        
+    },
 
-        })     
+    getArticleById: (req, res) => {UserModel.find({}, (err, user) => {
+        if (err) {
+            res.status(500).send(err)
+          } 
+        else {
+            ArticleModel.findById({_id: req.params.id}, (err, article) => {
+                if (err) {
+                    res.status(500).render('error',{
+                        message: 'Article inexistant',
+                        error: err.message
+                    })
+                }
+                else {
+                    res.status(200).render('article',{
+                        message: "Voici l'article correspondant",
+                        article,
+                        user
+                    })
+                }
+            })
+        }
+    })   
     },
-    getArticle: (req, res) => {
-        ArticleModel.find({}, (err, things) => {
-            if (err) {
-                res.status(500).json({
-                    message: 'Error when getting things',
-                    error: err.message
-                })
-            } else {
-                res.status(200).json({
-                    message: 'Article retrieved',
-                    things
-                })
-            }
+    
+    updateArticle: (req, res) => {
+        ArticleModel.updateOne({ _id: req.body.id},{title: req.body.title, description: req.body.description}, (err, article) => {
+            res.render('index',{
+                article
+            })
         })
-    },
-    getArticleById: (req, res) => {
-        ArticleModel.find({}, (err, thing) => {
-            if (err) {
-                res.status(500).json({
-                    message: 'Error when getting thing',
-                    error: err.message
-                })
-            }
-            else {
-                res.status(200).json({
-                    message: 'Article retrieved',
-                    thing
-                })
-            }
-        })
-    },
+    },  
+
     deleteArticle: (req, res) => {
-        ArticleModel.deleteOne({ id: req.body.id}, (err, things) => {
+        ArticleModel.deleteOne({ id: req.body.id}, (err, article) => {
             res.json({
-                things
+                article
             })
         })
     }    

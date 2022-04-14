@@ -25,15 +25,9 @@ module.exports = {
                     error: err.message
                 })
             } else {
-                res.status(200).redirect('/user', {
-                    message: 'Saved',
-                    user
-                })
+                res.status(200).redirect('/users')
             }
         })
-
-   
-        
     },
 
     getUsers: (req, res) => {
@@ -52,7 +46,7 @@ module.exports = {
         })
     },
     getUserById: (req, res) => {
-        UserModel.find({}, (err, user) => {
+        UserModel.findById({_id: req.params.id}, (err, user) => {
             if (err) {
                 res.status(500).render('error',{
                     message: 'Error when getting thing',
@@ -67,8 +61,16 @@ module.exports = {
             }
         })
     },
+    updateUser: (req, res) => {
+        UserModel.updateOne({ _id: req.body.id},{firstname: req.body.firstname, lastname: req.body.lastname, age: req.body.age}, (err, user) => {
+            res.json({
+                user
+            })
+        })
+    },  
+    
     deleteUser: (req, res) => {
-        UserModel.deleteOne({ id: req.body.id}, (err, user) => {
+        UserModel.deleteOne({ _id: req.body.id}, (err, user) => {
             res.json({
                 user
             })
