@@ -4,7 +4,7 @@ const {ArticleModel} = require('../models/home')
 
 module.exports = {
   
-    articles: (req, res) => {UserModel.find({}, (err, users) => {
+    /*articles: (req, res) => {UserModel.find({}, (err, users) => {
         if (err) {
           res.status(500).send(err)
         } else {
@@ -21,10 +21,10 @@ module.exports = {
                 users
               })
             }
-          })*/
+          })
         }
       })
-    }, 
+    }, */
 
    /* articles: (req, res) => {
        
@@ -35,44 +35,22 @@ module.exports = {
     },*/
 
     addArticle: (req, res) => {
-        UserModel.findById({_id: req.body.id}, (err, user)=>{
-            console.log(user)
+        const article = new ArticleModel({
+            title: req.body.title,
+            description: req.body.description,
+            user: req.body.users
+        })
+
+        article.save({}, (err, article, user) => {
             if (err) {
-                res.status(500).json({
-                    message: 'Impossible de recuperer le user',
+                res.status(500).render('error',{
+                    message: 'erreur dans la sauvegarde de cet article',
                     error: err.message
                 })
-            } 
-            else {
-               
-                if (!user) {
-                    res.status(404).render('error',{
-                        error: 'Aucun user trouvé'
-                    })
-                }
-
-                const article = new ArticleModel({
-                    title: req.body.title,
-                    description: req.body.description,
-                    user: user._id
-                })
-
-                article.save({}, (err, article, user) => {
-                    if (err) {
-                        res.status(500).render('error',{
-                            message: 'erreur dans la sauvegarde de cet article',
-                            error: err.message
-                        })
-                    } else {
-                        res.status(200).redirect('/articles',{
-                            message: 'Saved',
-                            article,
-                            user
-                        })
-                    }
-                })
+            } else {
+                res.status(200).redirect('/')
             }
-        })    
+        })
     },
 
     getArticles: (req, res) => {UserModel.find({}, (err, users) =>{
@@ -132,7 +110,7 @@ module.exports = {
     
     updateArticle: (req, res) => {
         ArticleModel.updateOne({ _id: req.body.id},{title: req.body.title, description: req.body.description}, (err, article) => {
-            res.render('index',{
+            res.json({
                 article
             })
         })
