@@ -3,16 +3,6 @@ const {UserModel} = require('../models/user')
 
 module.exports = {
   
-    user: (req, res) => {
-        var id = req.params.id;
-        var user = users.find(u => u.id == id);
-        if (user == null || user == undefined) {
-            return res.status(404).render('error', {});
-        }
-       return res.status(200).render('user', {
-            user
-        })
-    }, 
     users: (req, res) => {
        
         res.status(200).render('users', {
@@ -21,23 +11,23 @@ module.exports = {
     },
     addUser: (req, res) => {
         
-        const User = new UserModel({
+        const user = new UserModel({
             firstname: req.body.firstname,
             lastname: req.body.lastname,
             age: req.body.age
             
         })
    
-        User.save({}, (err, thing) => {
+        user.save({}, (err, user) => {
             if (err) {
-                res.status(500).json({
+                res.status(500).render('error',{
                     message: 'Error when saving the thing',
                     error: err.message
                 })
             } else {
-                res.status(200).json({
+                res.status(200).redirect('/user', {
                     message: 'Saved',
-                    thing
+                    user
                 })
             }
         })
@@ -47,40 +37,40 @@ module.exports = {
     },
 
     getUsers: (req, res) => {
-        UserModel.find({}, (err, things) => {
+        UserModel.find({}, (err, users) => {
             if (err) {
-                res.status(500).json({
+                res.status(500).render('error',{
                     message: 'Error when getting things',
                     error: err.message
                 })
             } else {
-                res.status(200).json({
+                res.status(200).render('users',{
                     message: 'Things retrieved',
-                    things
+                    users
                 })
             }
         })
     },
     getUserById: (req, res) => {
-        UserModel.find({}, (err, thing) => {
+        UserModel.find({}, (err, user) => {
             if (err) {
-                res.status(500).json({
+                res.status(500).render('error',{
                     message: 'Error when getting thing',
                     error: err.message
                 })
             }
             else {
-                res.status(200).json({
+                res.status(200).render('user',{
                     message: 'Thing retrieved',
-                    thing
+                    user
                 })
             }
         })
     },
     deleteUser: (req, res) => {
-        UserModel.deleteOne({ id: req.body.id}, (err, things) => {
+        UserModel.deleteOne({ id: req.body.id}, (err, user) => {
             res.json({
-                things
+                user
             })
         })
     }  

@@ -9,15 +9,6 @@
 </head>
 <body>
     <%- include('includes/header') %> 
-    <% if (users.length > 0) { %>
-        <ul>
-            <% users.map( user => { %>
-                <li><%= user.firstname %> <%= user.lastname %> <%= user.age %></li>
-            <% }) %>
-        </ul>
-    <% } else { %>
-        <p>Aucun utilisateur</p>
-    <% } %>
    <p><%= user.id %></p>
    <p><%= user.firstname %></p>
    <p><%= user.lastname %></p>

@@ -1,9 +1,9 @@
 const {Schema, model} = require('mongoose');
 
-const userSchema = new Schema({ 
+/*const userSchema = new Schema({ 
     firstname: String,
     lastname: String,
-})
+})*/
 const articleSchema = new Schema({
     title: {
         type: String,
@@ -15,14 +15,14 @@ const articleSchema = new Schema({
     },
     user: {
        type:  Schema.Types.ObjectId,
-       ref: 'userSchema'
+       ref: 'User',
+       required: true
     }
 })
 
-const UserModel = model('User', userSchema);
+//const UserModel = model('User', userSchema);
 const ArticleModel = model('Article', articleSchema);
 
 module.exports = {
-    ArticleModel,
-     UserModel
+    ArticleModel
 } 

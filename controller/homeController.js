@@ -20,41 +20,53 @@ module.exports = {
             articles
         })
     },
-    addArticle: (req, res) => {
-        const User = new UserModel({
-            _id: new mongoose.Types.ObjectId(),
-            /*firstname: 'Mambo',
-            lastname: 'Cubano'*/
-        })
-        const article = new ArticleModel({
-            title: req.body.title,
-            description: req.body.description,
-            user: User._id
-        })
-    User.save( (err, author) => {
-       if (err) {
-        res.status(500).json({
-            error: err.message
-        })
-       }else {
 
-        Article.save({}, (err, thing) => {
+    addArticle: (req, res) => {
+        /*const user = new UserModel({
+            _id: new mongoose.Types.ObjectId(),
+            firstname: 'Mambo',
+            lastname: 'Cubano',
+            age: req.body
+        })*/
+        UserModel.find({
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+        },(err, user)=>{
             if (err) {
                 res.status(500).json({
-                    message: 'Error when saving the thing',
+                    message: 'Impossible de recuperer le user',
                     error: err.message
                 })
-            } else {
-                res.status(200).json({
-                    message: 'Saved',
-                    thing
-                })
+            } 
+            else {
+                if (!user) {
+                    res.status(404).render('error',{
+                        error: err.message
+                    })
+                }                
             }
-        })
+            console.log(user);
+            const article = new ArticleModel({
+                title: req.body.title,
+                description: req.body.description,
+                user: user._id
+            })
 
-       }
-    }) 
-        
+            article.save({}, (err, thing) => {
+                if (err) {
+                    res.status(500).json({
+                        message: 'Error when saving the thing',
+                        error: err.message
+                    })
+                } else {
+                    res.status(200).json({
+                        message: 'Saved',
+                        thing
+                    })
+                }
+            })
+
+        })     
     },
     getArticle: (req, res) => {
         ArticleModel.find({}, (err, things) => {
